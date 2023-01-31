@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-
+import { BroilerplateItemType } from "./types";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -38,16 +38,13 @@ export function activate(context: vscode.ExtensionContext) {
 }));
 }
 
-// TODO: get config correctly
-
-const config = vscode.workspace.getConfiguration("broilerplate");
-const options: Array<[string, string, string]> = config.get("options")||[];
 
 
 async function createFolder (folderName: string) {
   // Create the folder in the workspace
-  const wsf = vscode.workspace.workspaceFolders;
-  const workspaceFolder = vscode.workspace.workspaceFolders![0];
+
+  const config =  vscode.workspace.getConfiguration();
+  const options: Array<BroilerplateItemType> = config["[broilerplate]"];
 
 
   const selectedFolders = await vscode.window.showOpenDialog({
@@ -56,30 +53,27 @@ async function createFolder (folderName: string) {
     canSelectMany: false
   });
 
-
-  if (!selectedFolders || selectedFolders.length === 0) {
+  if (!selectedFolders || selectedFolders.length === 0) {
     return undefined;
   }
 
   const selectedFolderUri = selectedFolders[0];
   const selectedFolderPath = selectedFolderUri.fsPath;
-
-
   const folderPath = path.join(selectedFolderPath, folderName);
 
   await fs.promises.mkdir(folderPath, { recursive: true });
 
-  const filePath = path.join(folderPath, "index.js");
-  await fs.promises.writeFile(filePath, ["hello index", ""].join("\n"));
-
 
   // Create the files in the folder
-  options.forEach(async ([fileName, snippetName, snippetLanguage]: [string, string, string]) => {
+  options.forEach(async ({fileName, snippetName, snippetLang}) => {
 
     // If the fileName has the variable {folderName}, it will be replaced to the name of the current folder
     const filePath = path.join(folderPath, fileName.replace("{folderName}", folderName));
 
-    const body = ["hello", "world"].join("\n"); // Suppose to be created by snippet
+
+    // const commander = await vscode.commands.executeCommand('editor.action.insertSnippet',  { name: snippetName, langId: snippetLang, } );
+    const body = ""; // Suppose to be created by snippet
+
     await fs.promises.writeFile(filePath, body);
   });
 };

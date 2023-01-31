@@ -25,26 +25,29 @@
       }
     ],
     "configuration": {
-      "type": "array",
-      "title": "Broilerplate Configuration",
-      "default": [],
-      "items": {
-        "type": "array",
-        "default": [],
-        "items": [
-          {
-            "type": "string",
-            "default": "{folderName}.js"
-          },
-          {
-            "type": "string",
-            "default": "snippetname"
-          },
-          {
-            "type": "string",
-            "default": "global"
+      "type": "object",
+      "title": "Broilerplate extension configuration",
+      "properties": {
+        "broilerplate": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileName": {
+                "type": "string",
+                "description": "The file name to be created"
+              },
+              "snippetName": {
+                "type": "string",
+                "description": "The name of the snippet to be used"
+              },
+              "snippetLang": {
+                "type": "string",
+                "description": "The language of the snippet"
+              }
+            }
           }
-        ]
+        }
       }
     }
   },
